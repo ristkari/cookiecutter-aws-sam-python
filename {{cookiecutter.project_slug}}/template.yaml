@@ -40,7 +40,19 @@ Resources:
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
                     PARAM1: VALUE
-
+{%- if cookiecutter.include_xray == "y" %}
+            Policies:
+              - 
+                Version: '2012-10-17'
+                Statement:
+                  - 
+                    Sid: "AllowLambdaServiceToSendTraces"                    
+                    Effect: "Allow"
+                    Action:
+                      - "xray:PutTraceSegments"
+                      - "xray:PutTelemetryRecords"
+                    Resource: '*'
+{%- endif %}
 
     SecondFunction:
         Type: AWS::Serverless::Function
@@ -62,6 +74,7 @@ Resources:
             Environment:
                 Variables:
                     PARAM: VALUE
+{%- if cookiecutter.include_xray == "y" %}
             Policies:
               - 
                 Version: '2012-10-17'
@@ -73,7 +86,7 @@ Resources:
                       - "xray:PutTraceSegments"
                       - "xray:PutTelemetryRecords"
                     Resource: '*'
-
+{%- endif %}
 
 Outputs:
 {% if cookiecutter.include_apigw == "y"%}
