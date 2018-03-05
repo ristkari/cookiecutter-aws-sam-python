@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    {{ cookiecutter.project_name }}
+    
+    {{ cookiecutter.project_short_description }}
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Runtime: python3.6
+        Timeout: 10
+        Handler: app.lambda_handler
+{%- if cookiecutter.include_safe_deployment == "y" %}
+        AutoPublishAlias: live # More info about Safe Deployments: https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst
+        DeploymentPreference:
+            Type: Linear10PercentEvery1Minute {% endif %}
+        Environment:
+            Variables:
+                GLOBAL_PARAM: GLOBAL_VALUE
+
+
+Resources:
+
+    FirstFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: first_function/dev/
+            Handler: app.lambda_handler
+            Runtime: python3.6
+{%- if cookiecutter.include_xray == "y" %}
+            Tracing: Active {% endif %} {# Inline condition preserves formatting below and have no added space #}
+{%- if cookiecutter.include_apigw == "y" %}
+            Events:
+                CatchAll:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /first/{proxy+}
+                        Method: any {% endif %}
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    PARAM1: VALUE
+
+
+    SecondFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: second_function/dev/
+            Handler: app.lambda_handler
+            Runtime: python3.6
+{%- if cookiecutter.include_xray == "y" %}
+            Tracing: Active 
+{%- endif %} {# '-' controls where space will be removed: before {%-} or after {% %-}#}
+{%- if cookiecutter.include_apigw == "y" %}
+            Events:
+                CatchAll:
+                    Type: Api
+                    Properties:
+                        Path: /second/{proxy+}
+                        Method: any 
+{%- endif %}
+            Environment:
+                Variables:
+                    PARAM: VALUE
+            Policies:
+              - 
+                Version: '2012-10-17'
+                Statement:
+                  - 
+                    Sid: "AllowLambdaServiceToSendTraces"                    
+                    Effect: "Allow"
+                    Action:
+                      - "xray:PutTraceSegments"
+                      - "xray:PutTelemetryRecords"
+                    Resource: '*'
+
+
+Outputs:
+{% if cookiecutter.include_apigw == "y"%}
+    FirstApigwURL:
+      Description: "API Gateway endpoint URL for Prod environment for First Function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/first/"
+
+    SecondApigwURL:
+      Description: "API Gateway endpoint URL for Prod environment for Second Function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/second/"
+{%- endif %}
+
+    FirstFunction:
+      Description: "First Lambda Function ARN"
+      Value: !GetAtt FirstFunction.Arn
+
+    SecondFunction:
+      Description: "Second Lambda Function ARN"
+      Value: !GetAtt SecondFunction.Arn
