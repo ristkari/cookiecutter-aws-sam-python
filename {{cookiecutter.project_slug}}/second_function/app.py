@@ -4,17 +4,12 @@ import json
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all 
 
+# Patch all supported libraries for X-Ray - More info: https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python-patching.html
 patch_all()
-{% endif -%}
+{%- endif %}
 
 session = boto3.Session()
 
-{% if cookiecutter.include_xray == "y" %}
-# Decorator for sync function
-@xray_recorder.capture('## my_function')
-def my_function():
-    pass
-{% endif %}
 
 def lambda_handler(event, context):
 {% if cookiecutter.include_apigw == "y" %}
@@ -27,3 +22,10 @@ def lambda_handler(event, context):
         "hello": "world"
     }
 {% endif %}
+
+{% if cookiecutter.include_xray == "y" -%}
+# Decorator for sync function
+@xray_recorder.capture('## my_function')
+def my_function():
+    pass
+{% endif -%}
