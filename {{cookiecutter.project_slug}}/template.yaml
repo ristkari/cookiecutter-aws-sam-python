@@ -64,19 +64,7 @@ Resources:
             Environment:
                 Variables:
                     PARAM: VALUE
-{%- if cookiecutter.include_xray == "y" %}
-            Policies:
-              - 
-                Version: '2012-10-17'
-                Statement:
-                  - 
-                    Sid: "AllowLambdaServiceToSendTraces"                    
-                    Effect: "Allow"
-                    Action:
-                      - "xray:PutTraceSegments"
-                      - "xray:PutTelemetryRecords"
-                    Resource: '*'
-{%- endif %}
+
 
 Outputs:
 {% if cookiecutter.include_apigw == "y"%}
