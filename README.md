@@ -15,14 +15,18 @@ is to use [pipenv](https://docs.pipenv.org/) for that.
 
 Your serverless application should declare its dependencies in the generated `requirements.txt`.
 
-Options
--------
+## Options
+
 
 Option | Description
 ------------------------------------------------- | ---------------------------------------------------------------------------------
 `include_apigw` | Includes sample code for API Gateway Proxy integration for Lambda and a Catch All method in SAM as a starting point
 `include_xray` | Includes both sample code for getting started with AWS X-Ray and adds necessary permission and `Tracing` to your function
 `include_safe_deployment` | Sends by default 10% of traffic for every 1 minute to a newly deployed function using [CodeDeploy + SAM integration](https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst) - Linear10PercentEvery1Minute
+
+## Advanced
+
+Optionally, you can now generate a CI/CD pipeline by using the following cookiecutter `cookiecutter gh:heitorlessa/cookiecutter-aws-sam-python-pipeline`.
 
 # Credits
 
