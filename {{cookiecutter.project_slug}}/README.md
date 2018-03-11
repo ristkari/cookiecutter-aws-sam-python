@@ -29,13 +29,6 @@ pip install -r first_function/requirements.txt -t first_function/dev/
 cp first_function/app.py first_function/dev/
 ```
 
-Repeat the process for the `second_function`:
-
-```bash
-pip install -r second_function/requirements.txt -t second_function/dev/
-cp second_function/app.py second_function/dev/
-```
-
 Now, run the following command to have SAM package your source code to a S3 Bucket prior to deployment:
 
 ```bash

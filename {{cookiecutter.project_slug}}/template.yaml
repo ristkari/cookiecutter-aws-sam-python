@@ -44,43 +44,14 @@ Resources:
 
 {%- endif %}
 
-    SecondFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: second_function/dev/
-            Handler: app.lambda_handler
-            Runtime: python3.6
-{%- if cookiecutter.include_xray == "y" %}
-            Tracing: Active 
-{%- endif %} {# '-' controls where space will be removed: before {%-} or after {% %-}#}
-{%- if cookiecutter.include_apigw == "y" %}
-            Events:
-                CatchAll:
-                    Type: Api
-                    Properties:
-                        Path: /second/{proxy+}
-                        Method: any 
-{%- endif %}
-            Environment:
-                Variables:
-                    PARAM: VALUE
-
-
 Outputs:
 {% if cookiecutter.include_apigw == "y"%}
     FirstApigwURL:
       Description: "API Gateway endpoint URL for Prod environment for First Function"
       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/first/"
-
-    SecondApigwURL:
-      Description: "API Gateway endpoint URL for Prod environment for Second Function"
-      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/second/"
 {%- endif %}
 
     FirstFunction:
       Description: "First Lambda Function ARN"
       Value: !GetAtt FirstFunction.Arn
 
-    SecondFunction:
-      Description: "Second Lambda Function ARN"
-      Value: !GetAtt SecondFunction.Arn
